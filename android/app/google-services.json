@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "686870784106",
+    "project_id": "omora-sosial",
+    "storage_bucket": "omora-sosial.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686870784106:android:a8c6f51f1243f14ef38213",
+        "android_client_info": {
+          "package_name": "com.omora.social"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686870784106-8ivaqsti4hal44ro8lbpp6bhdl10chqo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.omora.social",
+            "certificate_hash": "ceca517c58fa4a10ee711cef65de105b6f850176"
+          }
+        },
+        {
+          "client_id": "686870784106-0m7ba4r22c38lkt06i91o09qkr30b5pg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7OIXWhObaLtnXeB8hl8EQOmatIGt9w98"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "686870784106-0m7ba4r22c38lkt06i91o09qkr30b5pg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
