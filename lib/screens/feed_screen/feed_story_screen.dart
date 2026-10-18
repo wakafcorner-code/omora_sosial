@@ -12,30 +12,33 @@ import 'package:untitled/utilities/const.dart';
 class FeedStoryScreen extends StatelessWidget {
   final FeedStoriesController controller;
 
-  const FeedStoryScreen({Key? key, required this.controller}) : super(key: key);
+  const FeedStoryScreen({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: cBG,
-      height: 100,
+      color: cWhite,
+      height: 110,
+      padding: const EdgeInsets.symmetric(vertical: 8),
       alignment: Alignment.centerLeft,
       child: GetBuilder(
           init: controller,
           builder: (controller) {
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               primary: true,
               child: Row(
                 children: [
                   myCard(controller),
                   ListView.builder(
                     shrinkWrap: true,
-                    // padding: const EdgeInsets.symmetric(: 5),
+                    physics: const NeverScrollableScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     itemCount: controller.storyUsers.length,
                     itemBuilder: (context, index) {
                       var storyUser = controller.storyUsers[index];
+                      final bool isSeen = storyUser.isAllStoryShown();
                       return GestureDetector(
                         onTap: () {
                           Get.bottomSheet(StoryScreen(users: controller.storyUsers, index: index), isScrollControlled: true, ignoreSafeArea: false).then((value) {
@@ -43,35 +46,47 @@ class FeedStoryScreen extends StatelessWidget {
                           });
                         },
                         child: Container(
-                          // color: Colors.red,
-                          padding: const EdgeInsets.symmetric(horizontal: 1),
-                          width: 80,
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          width: 82,
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
+                                padding: const EdgeInsets.all(2.5),
                                 decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: storyUser.isAllStoryShown() ? cLightText.withValues(alpha: 0.4) : cPrimary,
-                                      width: 2,
-                                    ),
-                                    shape: BoxShape.circle),
-                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                child: MyCachedProfileImage(
-                                  imageUrl: storyUser.profile,
-                                  fullName: storyUser.fullName,
-                                  width: 60,
-                                  height: 60,
-                                  cornerRadius: 60,
+                                  shape: BoxShape.circle,
+                                  gradient: isSeen ? cGradientStorySeen : cGradientStory,
+                                  boxShadow: isSeen
+                                      ? null
+                                      : [
+                                          BoxShadow(
+                                            color: cAccentPink.withValues(alpha: 0.3),
+                                            blurRadius: 8,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(2.0),
+                                  decoration: const BoxDecoration(
+                                    color: cWhite,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: MyCachedProfileImage(
+                                    imageUrl: storyUser.profile,
+                                    fullName: storyUser.fullName,
+                                    width: 56,
+                                    height: 56,
+                                    cornerRadius: 56,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 5,
-                              ),
+                              const SizedBox(height: 6),
                               SizedBox(
-                                width: 72,
+                                width: 74,
                                 child: Text(
                                   storyUser.username ?? '',
-                                  style: MyTextStyle.gilroyMedium(size: 14),
+                                  style: MyTextStyle.gilroySemiBold(size: 12, color: cMainText),
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -91,6 +106,7 @@ class FeedStoryScreen extends StatelessWidget {
 
   Widget myCard(FeedStoriesController controller) {
     var isAnyStory = controller.myUser.stories?.isNotEmpty ?? false;
+    final bool isSeen = controller.myUser.isAllStoryShown();
     return GestureDetector(
       onTap: () {
         InterstitialManager.shared.loadAd();
@@ -100,55 +116,72 @@ class FeedStoryScreen extends StatelessWidget {
         });
       },
       child: Container(
-        width: 90,
-        // color: Colors.green,
+        width: 82,
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.transparent,
-                    width: 2,
+            Stack(
+              alignment: Alignment.bottomRight,
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(2.5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: isAnyStory ? (isSeen ? cGradientStorySeen : cGradientStory) : null,
+                    border: isAnyStory
+                        ? null
+                        : Border.all(
+                            color: const Color(0xFFE2E8F0),
+                            width: 1.5,
+                          ),
                   ),
-                  shape: BoxShape.circle),
-              // padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isAnyStory ? (controller.myUser.isAllStoryShown() ? cLightText.withValues(alpha: 0.4) : cPrimary) : Colors.transparent,
-                          width: 2,
-                        ),
-                        shape: BoxShape.circle),
-                    padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  child: Container(
+                    padding: isAnyStory ? const EdgeInsets.all(2.0) : EdgeInsets.zero,
+                    decoration: const BoxDecoration(
+                      color: cWhite,
+                      shape: BoxShape.circle,
+                    ),
                     child: MyCachedProfileImage(
                       imageUrl: controller.myUser.profile,
                       fullName: controller.myUser.fullName,
-                      width: 60,
-                      height: 60,
-                      cornerRadius: 60,
+                      width: 56,
+                      height: 56,
+                      cornerRadius: 56,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.all(3),
-                    decoration: const BoxDecoration(color: cWhite, shape: BoxShape.circle),
-                    child: const Icon(
-                      Icons.add_circle,
-                      color: cPrimary,
-                      size: 18,
+                ),
+                Positioned(
+                  bottom: -1,
+                  right: -1,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      gradient: cGradientPrimary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: cWhite, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: cPrimary.withValues(alpha: 0.45),
+                          blurRadius: 5,
+                        ),
+                      ],
                     ),
-                  )
-                ],
-              ),
+                    child: const Icon(
+                      Icons.add_rounded,
+                      color: cWhite,
+                      size: 15,
+                    ),
+                  ),
+                )
+              ],
             ),
-            const SizedBox(
-              height: 5,
-            ),
+            const SizedBox(height: 6),
             Text(
               LKeys.you.tr,
-              style: MyTextStyle.gilroyMedium(size: 14),
+              style: MyTextStyle.gilroySemiBold(size: 12, color: cMainText),
               overflow: TextOverflow.ellipsis,
             ),
           ],

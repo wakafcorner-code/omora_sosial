@@ -19,23 +19,36 @@ class FloatingBtnForCreating extends StatelessWidget {
   final Function()? onStoryBack;
   final Function(Reel reel)? onReelBack;
 
-  FloatingBtnForCreating({super.key, this.onPostBack, this.onStoryBack, this.onReelBack});
+  const FloatingBtnForCreating({super.key, this.onPostBack, this.onStoryBack, this.onReelBack});
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.only(right: 18, bottom: 32),
         child: GestureDetector(
           onTap: _openSheet,
-          child: CircleAvatar(
-            radius: 30,
-            backgroundColor: cPrimary,
+          child: Container(
+            width: 58,
+            height: 58,
+            decoration: BoxDecoration(
+              gradient: cGradientPrimary,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: cPrimary.withValues(alpha: 0.45),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
             child: Image.asset(
               MyImages.quill,
-              width: 25,
-              height: 25,
+              width: 26,
+              height: 26,
+              color: cWhite,
             ),
           ),
         ),
@@ -61,7 +74,6 @@ class FloatingBtnForCreating extends StatelessWidget {
             isScrollControlled: true,
             ignoreSafeArea: false)
         .then((value) {
-      print(InterstitialManager.shared.interstitialAd);
       InterstitialManager.shared.showAd();
       if (onStoryBack != null) {
         onStoryBack!();
@@ -99,70 +111,81 @@ class _CreatingChooseSheet extends StatelessWidget {
 
   const _CreatingChooseSheet({required this.onPostTap, required this.onStoryTap, required this.onReelTap});
 
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
       child: Wrap(
         children: [
           ClipSmoothRect(
-            radius: SmoothBorderRadius.vertical(
-              top: SmoothRadius(cornerRadius: 30, cornerSmoothing: cornerSmoothing),
+            radius: const SmoothBorderRadius.vertical(
+              top: SmoothRadius(cornerRadius: 28, cornerSmoothing: cornerSmoothing),
             ),
             child: Container(
               color: cBlackSheetBG,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: SafeArea(
                 child: Column(
                   children: [
+                    // Drag Handle
                     Container(
-                      height: 65,
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            LKeys.upload.tr,
-                            style: MyTextStyle.gilroyRegular(color: cWhite),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: CircleAvatar(
-                              radius: 16,
-                              backgroundColor: cWhite.withValues(alpha: 0.1),
-                              child: Image.asset(
-                                MyImages.close,
-                                height: 12,
-                                width: 12,
-                                color: cLightText,
-                              ),
-                            ),
-                          )
-                        ],
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16, top: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    Container(
-                      height: 0.5,
-                      width: double.infinity,
-                      color: cDarkText,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          LKeys.upload.tr,
+                          style: MyTextStyle.gilroyBold(color: cWhite, size: 20),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: CircleAvatar(
+                            radius: 16,
+                            backgroundColor: cWhite.withValues(alpha: 0.1),
+                            child: Image.asset(
+                              MyImages.close,
+                              height: 12,
+                              width: 12,
+                              color: cWhite,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 16),
                     _card(
                       imageName: MyImages.feed,
                       title: LKeys.feed,
+                      subtitle: "Bagikan postingan foto, teks, atau audio",
+                      gradient: cGradientPrimary,
                       onTap: onPostTap,
                     ),
+                    const SizedBox(height: 10),
                     _card(
                       imageName: MyImages.story,
                       title: LKeys.story,
+                      subtitle: "Momen visual 24 jam untuk pengikut Anda",
+                      gradient: cGradientReels,
                       onTap: onStoryTap,
                     ),
+                    const SizedBox(height: 10),
                     _card(
                       imageName: MyImages.reels,
                       title: LKeys.reels,
+                      subtitle: "Buat video pendek seru dan menarik",
+                      gradient: cGradientSunset,
                       onTap: onReelTap,
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -173,28 +196,78 @@ class _CreatingChooseSheet extends StatelessWidget {
     );
   }
 
-  Widget _card({required String imageName, required String title, required Function() onTap}) {
-    return InkWell(
-      onTap: () {
-        Get.back();
-        onTap();
-      },
-      child: Container(
-        padding: EdgeInsets.all(15),
-        child: Row(
-          children: [
-            Image.asset(
-              imageName,
-              width: 30,
-              height: 30,
-              color: cWhite,
-            ),
-            SizedBox(width: 15),
-            Text(
-              title.tr,
-              style: MyTextStyle.gilroyMedium(size: 18, color: cWhite),
-            )
-          ],
+  Widget _card({
+    required String imageName,
+    required String title,
+    required String subtitle,
+    required LinearGradient gradient,
+    required Function() onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Get.back();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  gradient: gradient,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gradient.colors.first.withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: Image.asset(
+                  imageName,
+                  width: 24,
+                  height: 24,
+                  color: cWhite,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title.tr,
+                      style: MyTextStyle.gilroyBold(size: 16, color: cWhite),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: MyTextStyle.gilroyRegular(size: 12, color: cLightText),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: Colors.white38,
+                size: 22,
+              )
+            ],
+          ),
         ),
       ),
     );

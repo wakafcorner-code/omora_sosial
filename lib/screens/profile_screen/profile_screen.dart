@@ -373,31 +373,45 @@ class ProfileScreen extends StatelessWidget {
           return controller.user == null
               ? Container()
               : Container(
-                  padding: const EdgeInsets.all(15),
-                  color: cBlack,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: const BoxDecoration(
+                    color: cBlackSheetBG,
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(24),
+                    ),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       namePlate(controller),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 12),
                       Row(
                         children: [
                           GestureDetector(
                             onTap: () {
                               Get.to(() => FollowerFollowingScreen(isForFollowing: false, user: controller.user));
                             },
-                            child: Row(
-                              children: [
-                                Text(
-                                  controller.user?.followers?.makeToString() ?? '0',
-                                  style: MyTextStyle.gilroyBold(color: cWhite),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  LKeys.followers.tr,
-                                  style: MyTextStyle.gilroyLight(color: cWhite),
-                                ),
-                              ],
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    controller.user?.followers?.makeToString() ?? '0',
+                                    style: MyTextStyle.gilroyBold(color: cWhite, size: 15),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    LKeys.followers.tr,
+                                    style: MyTextStyle.gilroyRegular(color: Colors.white70, size: 13),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -405,23 +419,32 @@ class ProfileScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(() => FollowerFollowingScreen(isForFollowing: true, user: controller.user));
                             },
-                            child: Row(
-                              children: [
-                                Text(
-                                  controller.user?.following?.makeToString() ?? '0',
-                                  style: MyTextStyle.gilroyBold(color: cWhite),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  LKeys.following.tr,
-                                  style: MyTextStyle.gilroyLight(color: cWhite),
-                                ),
-                              ],
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    controller.user?.following?.makeToString() ?? '0',
+                                    style: MyTextStyle.gilroyBold(color: cWhite, size: 15),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    LKeys.following.tr,
+                                    style: MyTextStyle.gilroyRegular(color: Colors.white70, size: 13),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       controller.user?.bio == null
                           ? Container()
                           : Column(
@@ -437,13 +460,15 @@ class ProfileScreen extends StatelessWidget {
                                   trimCollapsedText: LKeys.showMore.tr,
                                   trimExpandedText: '  ${LKeys.showLess.tr}',
                                   text: controller.user?.bio ?? '',
-                                  basicStyle: MyTextStyle.gilroyLight(size: 16, color: cLightIcon),
-                                  detectedStyle: MyTextStyle.gilroyRegular(size: 16, color: cPrimary),
+                                  basicStyle: MyTextStyle.gilroyLight(size: 15, color: cAudioSpaceText),
+                                  detectedStyle: MyTextStyle.gilroyBold(size: 15, color: cAccentCyan),
                                 ),
                                 const SizedBox(height: 10),
                               ],
                             ),
                       Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
                         children: (controller.user?.getInterestsStringList() ?? []).map((e) {
                           return RoomCardInterestTagToShow(
                             tag: e,
@@ -477,12 +502,22 @@ class ProfileScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(color: cPrimary.withValues(alpha: 0.2), shape: BoxShape.circle),
+                      padding: const EdgeInsets.all(9),
+                      decoration: BoxDecoration(
+                        gradient: cGradientSky,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: cSecondary.withValues(alpha: 0.35),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Image.asset(
                         MyImages.chatProfile,
-                        width: 22,
-                        height: 22,
+                        width: 20,
+                        height: 20,
                         color: cWhite,
                       ),
                     ),
@@ -492,23 +527,25 @@ class ProfileScreen extends StatelessWidget {
                         user: controller.user,
                         child: (isFollowing) {
                           return Container(
-                            padding: const EdgeInsets.only(right: 25, left: 25, top: 10, bottom: 8),
-                            decoration: BoxDecoration(color: isFollowing ? cDarkText.withValues(alpha: 0.7) : cWhite, borderRadius: BorderRadius.circular(100)),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Text(
-                                  isFollowing ? LKeys.unFollow.tr : LKeys.follow.tr,
-                                  style: MyTextStyle.gilroyBold(color: isFollowing ? cLightText : cBlack),
-                                ),
-                                Opacity(
-                                  opacity: 0,
-                                  child: Text(
-                                    LKeys.unFollow.tr,
-                                    style: MyTextStyle.gilroyBold(),
-                                  ),
-                                ),
-                              ],
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 9),
+                            decoration: BoxDecoration(
+                              gradient: isFollowing ? null : cGradientPrimary,
+                              color: isFollowing ? Colors.white.withValues(alpha: 0.15) : null,
+                              borderRadius: BorderRadius.circular(100),
+                              border: isFollowing ? Border.all(color: Colors.white30, width: 1) : null,
+                              boxShadow: isFollowing
+                                  ? null
+                                  : [
+                                      BoxShadow(
+                                        color: cPrimary.withValues(alpha: 0.4),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                            ),
+                            child: Text(
+                              isFollowing ? LKeys.unFollow.tr : LKeys.follow.tr,
+                              style: MyTextStyle.gilroyBold(color: cWhite, size: 14),
                             ),
                           );
                         },
@@ -556,28 +593,100 @@ class ProfileScreen extends StatelessWidget {
 
   Widget segmentController(ProfileController controller) {
     return Obx(
-      () => CupertinoSlidingSegmentedControl(
-        children: {0: buildSegment(LKeys.feed, 0, controller), 1: buildSegment(LKeys.reels, 1, controller)},
-        groupValue: controller.selectedPage.value,
-        // backgroundColor: cWhite.withValues(alpha: 0.12),
-        // thumbColor: cWhite,
-        backgroundColor: cLightText.withValues(alpha: 0.2),
-        thumbColor: cBlack,
-        padding: const EdgeInsets.all(0),
-        onValueChanged: (value) {
-          controller.onChangeSegment(value ?? 0);
-        },
-      ),
-    );
-  }
-
-  Widget buildSegment(String text, int index, ProfileController controller) {
-    return Container(
-      alignment: Alignment.center,
-      width: (Get.width / 2) - 30,
-      child: Text(
-        text.tr.toUpperCase(),
-        style: MyTextStyle.gilroySemiBold(size: 13, color: controller.selectedPage == index ? cWhite : cBlack).copyWith(letterSpacing: 2),
+      () => Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => controller.onChangeSegment(0),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(vertical: 9),
+                  decoration: BoxDecoration(
+                    color: controller.selectedPage.value == 0 ? cWhite : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: controller.selectedPage.value == 0
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        MyImages.feed,
+                        width: 17,
+                        height: 17,
+                        color: controller.selectedPage.value == 0 ? cPrimary : const Color(0xFF94A3B8),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        LKeys.feed.tr,
+                        style: controller.selectedPage.value == 0
+                            ? MyTextStyle.gilroyBold(size: 13, color: cPrimary)
+                            : MyTextStyle.gilroyMedium(size: 13, color: const Color(0xFF64748B)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => controller.onChangeSegment(1),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(vertical: 9),
+                  decoration: BoxDecoration(
+                    color: controller.selectedPage.value == 1 ? cWhite : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: controller.selectedPage.value == 1
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        MyImages.reels,
+                        width: 17,
+                        height: 17,
+                        color: controller.selectedPage.value == 1 ? cAccentPink : const Color(0xFF94A3B8),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        LKeys.reels.tr,
+                        style: controller.selectedPage.value == 1
+                            ? MyTextStyle.gilroyBold(size: 13, color: cAccentPink)
+                            : MyTextStyle.gilroyMedium(size: 13, color: const Color(0xFF64748B)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

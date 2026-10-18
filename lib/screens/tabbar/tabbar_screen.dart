@@ -45,15 +45,21 @@ class TabBarScreen extends StatelessWidget {
                   index: controller.selectedTab,
                 ),
               ),
-              BannerAdView(),
+              if (controller.selectedTab != 2) BannerAdView(),
               Container(
-                decoration: const BoxDecoration(
-                  color: cBlack,
+                decoration: BoxDecoration(
+                  color: controller.selectedTab == 2 ? cBlack : cWhite,
+                  border: Border(
+                    top: BorderSide(
+                      color: controller.selectedTab == 2 ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF1F5F9),
+                      width: 1.0,
+                    ),
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, -2),
+                      color: controller.selectedTab == 2 ? Colors.black38 : const Color(0xFF0F172A).withValues(alpha: 0.06),
+                      blurRadius: 18,
+                      offset: const Offset(0, -3),
                     )
                   ],
                 ),
@@ -85,6 +91,7 @@ class TabBarScreen extends StatelessWidget {
   }
 
   Widget button(String title, String image, int index, TabBarController controller, {bool isBudged = false}) {
+    final bool isDarkTab = controller.selectedTab == 2;
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -106,6 +113,7 @@ class TabBarScreen extends StatelessWidget {
             title: title,
             isSelected: controller.selectedTab == index,
             isBudged: isBudged,
+            isDark: isDarkTab,
           ),
         ),
       ),
@@ -137,27 +145,34 @@ class TabBarButton extends StatelessWidget {
   final String image;
   final bool isSelected;
   final bool isBudged;
+  final bool isDark;
 
   const TabBarButton({
-    Key? key,
+    super.key,
     required this.title,
     required this.image,
     required this.isSelected,
     this.isBudged = false,
-  }) : super(key: key);
+    this.isDark = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final Color activeColor = isDark ? cWhite : cPrimary;
+    final Color inactiveColor = isDark ? Colors.white60 : const Color(0xFF94A3B8);
+    final Color activePillBg = isDark ? Colors.white.withValues(alpha: 0.15) : cPrimary.withValues(alpha: 0.12);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           decoration: BoxDecoration(
-            color: isSelected ? cPrimary.withValues(alpha: 0.18) : Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
+            color: isSelected ? activePillBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Stack(
             clipBehavior: Clip.none,
@@ -167,19 +182,25 @@ class TabBarButton extends StatelessWidget {
                 image,
                 width: 22,
                 height: 22,
-                color: isSelected ? cPrimary : cLightText,
+                color: isSelected ? activeColor : inactiveColor,
               ),
               if (isBudged)
                 Positioned(
-                  top: -2,
-                  right: -4,
+                  top: -3,
+                  right: -5,
                   child: Container(
-                    height: 9,
-                    width: 9,
+                    height: 10,
+                    width: 10,
                     decoration: BoxDecoration(
-                      color: cRed,
+                      gradient: cGradientSunset,
                       shape: BoxShape.circle,
-                      border: Border.all(color: cBlack, width: 1.5),
+                      border: Border.all(color: isDark ? cBlack : cWhite, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: cRed.withValues(alpha: 0.5),
+                          blurRadius: 4,
+                        ),
+                      ],
                     ),
                   ),
                 )
@@ -197,8 +218,8 @@ class TabBarButton extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: isSelected
-                  ? MyTextStyle.gilroyBold(size: 11, color: cPrimary)
-                  : MyTextStyle.gilroyMedium(size: 11, color: cLightText),
+                  ? MyTextStyle.gilroyBold(size: 11, color: activeColor)
+                  : MyTextStyle.gilroyMedium(size: 11, color: inactiveColor),
             ),
           ),
         ),

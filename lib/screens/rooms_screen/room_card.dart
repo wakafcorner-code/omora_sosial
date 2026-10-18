@@ -1,4 +1,3 @@
-import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:untitled/common/extensions/font_extension.dart';
@@ -44,60 +43,110 @@ class RoomCard extends StatelessWidget {
 
   Widget simpleCard(RoomController controller) {
     return Container(
-      decoration: ShapeDecoration(color: cLightBg.withValues(alpha: 0.5), shape: const SmoothRectangleBorder(borderRadius: SmoothBorderRadius.all(SmoothRadius(cornerRadius: 12, cornerSmoothing: cornerSmoothing)))),
-      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      decoration: BoxDecoration(
+        color: cWhite,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 14),
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              MyCachedImage(
-                imageUrl: controller.room.photo,
-                width: 60,
-                height: 60,
-                cornerRadius: 60,
+              Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: cGradientPrimary,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(1.5),
+                  decoration: const BoxDecoration(
+                    color: cWhite,
+                    shape: BoxShape.circle,
+                  ),
+                  child: MyCachedImage(
+                    imageUrl: controller.room.photo,
+                    width: 56,
+                    height: 56,
+                    cornerRadius: 56,
+                  ),
+                ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       controller.room.title ?? '',
-                      style: MyTextStyle.gilroyBold(size: 20, color: cBlack),
+                      style: MyTextStyle.gilroyBold(size: 18, color: cBlack),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          (controller.room.totalMember ?? 0).makeToString(),
-                          style: MyTextStyle.gilroySemiBold(size: 17, color: cLightText),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          LKeys.members.tr,
-                          style: MyTextStyle.gilroyLight(size: 17, color: cLightText),
-                        ),
-                      ],
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEEF2FF),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.people_alt_rounded,
+                            size: 14,
+                            color: cSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            (controller.room.totalMember ?? 0).makeToString(),
+                            style: MyTextStyle.gilroyBold(size: 12, color: cSecondary),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            LKeys.members.tr,
+                            style: MyTextStyle.gilroyMedium(size: 12, color: cSecondary),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: Color(0xFF94A3B8),
+                size: 24,
               )
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            controller.room.desc ?? '',
-            style: MyTextStyle.outfitLight(color: cBlack),
-          ),
-          const SizedBox(height: 5),
+          if (controller.room.desc?.isNotEmpty == true) ...[
+            const SizedBox(height: 10),
+            Text(
+              controller.room.desc ?? '',
+              style: MyTextStyle.outfitRegular(color: cDarkText, size: 14),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          const SizedBox(height: 8),
           Wrap(
+            spacing: 6,
+            runSpacing: 4,
             children: controller.room.getInterests().map((e) {
               return RoomCardInterestTagToShow(
                 tag: e.title ?? '',
-                color: cGreen,
               );
             }).toList(),
           )
@@ -107,57 +156,102 @@ class RoomCard extends StatelessWidget {
   }
 
   Widget homeCard(RoomController controller) {
+    final VibrantColorPair colorPair = getVibrantColorPair(controller.room.title ?? '');
     return AspectRatio(
       aspectRatio: .7,
-      child: ClipSmoothRect(
-        radius: const SmoothBorderRadius.all(SmoothRadius(cornerRadius: 15, cornerSmoothing: cornerSmoothing)),
-        child: Column(
-          children: [
-            ClipSmoothRect(
-              radius: const SmoothBorderRadius.vertical(top: SmoothRadius(cornerRadius: 15, cornerSmoothing: cornerSmoothing)),
-              child: MyCachedImage(imageUrl: controller.room.photo, width: double.infinity, height: 110),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 5),
             ),
-            Expanded(
-              child: Container(
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 115,
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: ShapeDecoration(color: cDarkGreen, shape: SmoothRectangleBorder(borderRadius: SmoothBorderRadius.vertical(bottom: SmoothRadius(cornerRadius: 15, cornerSmoothing: 1)))),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          controller.room.title ?? '',
-                          style: MyTextStyle.gilroySemiBold(color: cWhite),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '${controller.room.getInterestWithHashtag().toLowerCase()}',
-                          style: MyTextStyle.gilroyRegular(color: cPrimary),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                        ),
-                      ],
-                    ),
-                    RichText(
-                      text: TextSpan(text: (controller.room.totalMember ?? 0).makeToString(), style: MyTextStyle.gilroySemiBold(size: 14, color: cWhite), children: [
-                        TextSpan(
-                          text: ' ${LKeys.members.tr}',
-                          style: MyTextStyle.gilroyLight(size: 14, color: cWhite),
-                        )
-                      ]),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    )
-                  ],
+                child: MyCachedImage(
+                  imageUrl: controller.room.photo,
+                  width: double.infinity,
+                  height: 115,
                 ),
               ),
-            )
-          ],
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        cBlackSheetBG,
+                        cDarkBG,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            controller.room.title ?? '',
+                            style: MyTextStyle.gilroyBold(color: cWhite, size: 15),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            controller.room.getInterestWithHashtag().toLowerCase(),
+                            style: MyTextStyle.gilroySemiBold(color: colorPair.text, size: 12),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.people_alt_rounded,
+                              size: 13,
+                              color: cWhite,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              (controller.room.totalMember ?? 0).makeToString(),
+                              style: MyTextStyle.gilroyBold(size: 12, color: cWhite),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              LKeys.members.tr,
+                              style: MyTextStyle.gilroyLight(size: 12, color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -165,23 +259,27 @@ class RoomCard extends StatelessWidget {
 }
 
 class RoomCardInterestTagToShow extends StatelessWidget {
-  const RoomCardInterestTagToShow({Key? key, required this.tag, this.color = cPrimary}) : super(key: key);
+  const RoomCardInterestTagToShow({super.key, required this.tag, this.color});
   final String tag;
-
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final VibrantColorPair pair = getVibrantColorPair(tag);
+    final Color effectiveBg = color != null ? color!.withValues(alpha: 0.12) : pair.bg;
+    final Color effectiveText = color ?? pair.text;
+
     return Container(
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(100)),
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-      margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: Text(
-          tag.toUpperCase(),
-          style: MyTextStyle.gilroyBold(size: 13, color: color).copyWith(letterSpacing: 0.5),
-        ),
+      decoration: BoxDecoration(
+        color: effectiveBg,
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: effectiveText.withValues(alpha: 0.25), width: 1),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 11),
+      margin: const EdgeInsets.only(right: 4, top: 3, bottom: 3),
+      child: Text(
+        tag.toUpperCase(),
+        style: MyTextStyle.gilroyBold(size: 11, color: effectiveText).copyWith(letterSpacing: 0.5),
       ),
     );
   }

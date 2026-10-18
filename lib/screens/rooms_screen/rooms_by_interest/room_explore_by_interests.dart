@@ -71,45 +71,48 @@ class RoomExploreByInterests extends StatelessWidget {
 }
 
 class RoomInterestTag extends StatelessWidget {
-  const RoomInterestTag({Key? key, required this.title, this.onTap, this.count}) : super(key: key);
+  const RoomInterestTag({super.key, required this.title, this.onTap, this.count});
   final String? title;
   final int? count;
   final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
+    final VibrantColorPair pair = getVibrantColorPair(title ?? '');
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         margin: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
         decoration: BoxDecoration(
-          color: cPrimary,
+          color: pair.bg,
           borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: pair.text.withValues(alpha: 0.25), width: 1.2),
         ),
         child: FittedBox(
           alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Row(
-              children: [
-                Text(
-                  title?.toUpperCase() ?? '',
-                  style: MyTextStyle.gilroyBold(size: 14, color: cBlack).copyWith(letterSpacing: 0.5),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title?.toUpperCase() ?? '',
+                style: MyTextStyle.gilroyBold(size: 13, color: pair.text).copyWith(letterSpacing: 0.5),
+              ),
+              if (count != null && count! > 0) ...[
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: pair.text.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    count!.makeToString(),
+                    style: MyTextStyle.gilroyBold(size: 11, color: pair.text),
+                  ),
                 ),
-                count != null
-                    ? Row(
-                        children: [
-                          const SizedBox(width: 7),
-                          Text(
-                            count?.makeToString() ?? '',
-                            style: MyTextStyle.gilroyLight(size: 14, color: cBlack),
-                          ),
-                        ],
-                      )
-                    : Container(),
               ],
-            ),
+            ],
           ),
         ),
       ),

@@ -1,4 +1,3 @@
-import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:untitled/common/extensions/date_time_extension.dart';
@@ -22,25 +21,50 @@ class ChatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 14),
       child: ContextMenuWidget(
         child: GestureDetector(
           onTap: () {
             Get.to(() => ChattingView(chatUserRoom: chatUserRoom));
           },
           child: Container(
-            decoration: const ShapeDecoration(shape: SmoothRectangleBorder(borderRadius: SmoothBorderRadius.all(SmoothRadius(cornerRadius: 8, cornerSmoothing: cornerSmoothing))), color: cLightBg),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            decoration: BoxDecoration(
+              color: cWhite,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFF1F5F9), width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
             child: Row(
               children: [
-                MyCachedProfileImage(
-                  imageUrl: chatUserRoom.profileImage,
-                  fullName: chatUserRoom.title,
-                  width: 50,
-                  height: 50,
-                  cornerRadius: 15,
+                Container(
+                  padding: const EdgeInsets.all(1.5),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: cGradientPrimary,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(1.0),
+                    decoration: const BoxDecoration(
+                      color: cWhite,
+                      shape: BoxShape.circle,
+                    ),
+                    child: MyCachedProfileImage(
+                      imageUrl: chatUserRoom.profileImage,
+                      fullName: chatUserRoom.title,
+                      width: 48,
+                      height: 48,
+                      cornerRadius: 48,
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,43 +74,55 @@ class ChatCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               chatUserRoom.title ?? '',
-                              style: MyTextStyle.gilroyBold(size: 16),
+                              style: MyTextStyle.gilroyBold(size: 15, color: cBlack),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: 2),
+                          const SizedBox(width: 4),
                           const VerifyIcon()
                         ],
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 3),
                       Text(
                         chatUserRoom.lastMsg ?? '',
-                        style: MyTextStyle.gilroyLight(size: 14, color: cLightText),
+                        style: MyTextStyle.gilroyRegular(size: 13, color: cLightText),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       )
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       chatUserRoom.time?.timeAgo() ?? '',
-                      style: MyTextStyle.gilroyLight(size: 14, color: cLightText),
+                      style: MyTextStyle.gilroyRegular(size: 11, color: const Color(0xFF94A3B8)),
                     ),
-                    Opacity(
-                      opacity: chatUserRoom.newMsgCount != 0 ? 1 : 0,
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 7.5, bottom: 6, left: 6, right: 6),
-                        decoration: const BoxDecoration(shape: BoxShape.circle, color: cPrimary),
-                        child: Text(
-                          (chatUserRoom.newMsgCount == -1 ? "" : chatUserRoom.newMsgCount?.makeToString() ?? ''),
-                          style: MyTextStyle.gilroySemiBold(size: 12, color: cBlack),
+                    const SizedBox(height: 4),
+                    if (chatUserRoom.newMsgCount != 0 && chatUserRoom.newMsgCount != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                        decoration: BoxDecoration(
+                          gradient: cGradientSunset,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: cRed.withValues(alpha: 0.35),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
+                        child: Text(
+                          chatUserRoom.newMsgCount == -1 ? "" : chatUserRoom.newMsgCount!.makeToString(),
+                          style: MyTextStyle.gilroyBold(size: 11, color: cWhite),
+                        ),
+                      )
+                    else
+                      const SizedBox(height: 18),
                   ],
                 )
               ],

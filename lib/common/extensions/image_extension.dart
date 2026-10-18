@@ -13,7 +13,9 @@ class MyImages {
   static var close = '${assetBase}close.png';
   static var comment = '${assetBase}comment.png';
   static var placeHolderImage = '${assetBase}placeholder-image.png';
-  static var logo = '${assetBase}logo.png';
+  static var logo = '${assetBase}omora_logo.png';
+  static var omoraEmblem = '${assetBase}omora_emblem.png';
+  static var omoraWordmark = '${assetBase}omora_wordmark.png';
   static var logoBlack = '${assetBase}logo_black.png';
   static var logoWhite = '${assetBase}logo_white.png';
   static var send = '${assetBase}send.png';

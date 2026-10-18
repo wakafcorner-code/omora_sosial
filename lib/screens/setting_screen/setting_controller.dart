@@ -99,14 +99,13 @@ class SettingController extends BaseController {
   void cleanAllSession() {
     SessionManager.shared.setLogin(false);
 
-    final GoogleSignIn googleSignIn = GoogleSignIn.instance;
     FirebaseNotificationManager.shared.subscribeToTopic(notificationTopic);
     NotificationService.shared.unsubscribeToAllMyRoom();
     SessionManager.shared.setUser(null);
     if (isPurchaseConfig) {
       Purchases.logOut();
     }
-    googleSignIn.signOut();
+    GoogleSignIn().signOut();
     stopLoading();
   }
 }

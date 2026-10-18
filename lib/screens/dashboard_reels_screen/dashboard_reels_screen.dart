@@ -14,28 +14,29 @@ class DashboardReelsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     DashboardReelsController controller = Get.put(DashboardReelsController());
     Widget topTag(DashboardReelPageType type) {
-      final isRTL = Directionality.of(context) == TextDirection.rtl;
       return Obx(
-        () => Expanded(
-          child: InkWell(
+        () {
+          final bool isSelected = type == controller.selectedPageType.value;
+          return GestureDetector(
             onTap: () {
               controller.changeTheType(type);
             },
-            child: Container(
-              height: 50,
-              alignment: isRTL ? (type == DashboardReelPageType.forYou ? Alignment.centerRight : Alignment.centerLeft) : (type == DashboardReelPageType.forYou ? Alignment.centerLeft : Alignment.centerRight),
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Container(
-                child: Text(
-                  type.title.tr,
-                  style: (type == controller.selectedPageType.value ? MyTextStyle.gilroyBold(color: cWhite, size: 18) : MyTextStyle.gilroyRegular(color: cWhite, size: 18)).copyWith(
-                    shadows: [BoxShadow(color: cBlack.withValues(alpha: 0.3), blurRadius: 50)],
-                  ),
-                ),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.white.withValues(alpha: 0.22) : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                type.title.tr,
+                style: isSelected
+                    ? MyTextStyle.gilroyBold(color: cWhite, size: 16)
+                    : MyTextStyle.gilroyMedium(color: Colors.white70, size: 16),
               ),
             ),
-          ),
-        ),
+          );
+        },
       );
     }
 
@@ -47,7 +48,7 @@ class DashboardReelsScreen extends StatelessWidget {
           PageView(
             controller: controller.pageController,
             onPageChanged: controller.onChangePage,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             children: [
               ReelsScreen(
                 reels: controller.reelsOfFollowings,
@@ -69,17 +70,28 @@ class DashboardReelsScreen extends StatelessWidget {
             ],
           ),
           SafeArea(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                topTag(DashboardReelPageType.following),
-                Container(
-                  height: 15,
-                  width: 1,
-                  color: cWhite,
-                ),
-                topTag(DashboardReelPageType.forYou),
-              ],
+            child: Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  topTag(DashboardReelPageType.following),
+                  const SizedBox(width: 4),
+                  topTag(DashboardReelPageType.forYou),
+                ],
+              ),
             ),
           )
         ],

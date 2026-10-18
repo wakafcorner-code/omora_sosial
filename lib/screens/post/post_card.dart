@@ -4,7 +4,6 @@ import 'package:figma_squircle_updated/figma_squircle.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:like_button/like_button.dart';
 import 'package:readmore/readmore.dart';
 import 'package:untitled/common/extensions/date_time_extension.dart';
 import 'package:untitled/common/extensions/font_extension.dart';
@@ -40,51 +39,56 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PostController controller = PostController(post, onDeletePost, refreshView);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 6),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: PostTopBar(controller: controller),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: const BoxDecoration(
+        color: cWhite,
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFF1F5F9), width: 6),
         ),
-        const SizedBox(
-          height: 7,
-        ),
-        (controller.post.desc != "" && controller.post.desc != null)
-            ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: PostDescriptionView(controller: controller),
-              )
-            : const SizedBox(height: 5),
-        if (controller.post.content?.isNotEmpty == true)
-          (controller.post.type == PostType.audio)
-              ? contentView(controller)
-              : (controller.post.type == PostType.image || controller.post.type == PostType.video)
-                  ? DoubleClickLikeAnimator(
-                      child: contentView(controller),
-                      onAnimation: () {
-                        if (controller.post.isLike == 0) {
-                          controller.likeFromDoubleTap();
-                        }
-                      },
-                      onTap: () {
-                        controller.openVideoSheet();
-                      },
-                    )
-                  : Container()
-        else if (controller.post.linkPreview != null)
-          UrlMetaDataCard(metadata: controller.post.linkPreview!)
-        else
-          const Column(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: PostBottomBar(controller: controller),
-        ),
-        const Divider(
-          thickness: 0.2,
-        ),
-      ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: PostTopBar(controller: controller),
+          ),
+          const SizedBox(height: 8),
+          (controller.post.desc != "" && controller.post.desc != null)
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: PostDescriptionView(controller: controller),
+                )
+              : const SizedBox(height: 4),
+          if (controller.post.content?.isNotEmpty == true)
+            (controller.post.type == PostType.audio)
+                ? contentView(controller)
+                : (controller.post.type == PostType.image || controller.post.type == PostType.video)
+                    ? DoubleClickLikeAnimator(
+                        child: contentView(controller),
+                        onAnimation: () {
+                          if (controller.post.isLike == 0) {
+                            controller.likeFromDoubleTap();
+                          }
+                        },
+                        onTap: () {
+                          controller.openVideoSheet();
+                        },
+                      )
+                    : Container()
+          else if (controller.post.linkPreview != null)
+            UrlMetaDataCard(metadata: controller.post.linkPreview!)
+          else
+            const Column(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: PostBottomBar(controller: controller),
+          ),
+          const SizedBox(height: 6),
+        ],
+      ),
     );
   }
 
@@ -111,10 +115,10 @@ class PostDescriptionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: ReadMoreText(
         controller.post.desc ?? '',
-        style: MyTextStyle.outfitLight(size: 16, color: isForVideo ? cLightIcon : cMainText),
+        style: MyTextStyle.outfitRegular(size: 15, color: isForVideo ? cLightIcon : cMainText),
         annotations: [
           Annotation(
             regExp: RegExp(r'#([a-zA-Z0-9_]+)'),
@@ -122,8 +126,9 @@ class PostDescriptionView extends StatelessWidget {
                 text: text,
                 style: textStyle?.copyWith(
                   color: cPrimary,
-                  fontFamily: MyTextStyle.outfitMedium(size: 16, color: cHashtagColor).fontFamily,
-                  fontSize: 16,
+                  fontFamily: MyTextStyle.outfitMedium(size: 15, color: cHashtagColor).fontFamily,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
@@ -142,11 +147,11 @@ class PostDescriptionView extends StatelessWidget {
           ),
         ],
         trimMode: TrimMode.Line,
-        trimLines: 5,
+        trimLines: 4,
         trimCollapsedText: ' ${LKeys.showMore.tr}',
         trimExpandedText: '   ${LKeys.showLess.tr}',
-        moreStyle: MyTextStyle.outfitRegular(color: isForVideo ? cLightIcon : cMainText, size: 16),
-        lessStyle: MyTextStyle.outfitRegular(color: isForVideo ? cLightIcon : cMainText, size: 16),
+        moreStyle: MyTextStyle.gilroyBold(color: cPrimary, size: 14),
+        lessStyle: MyTextStyle.gilroyBold(color: cPrimary, size: 14),
       ),
     );
   }
@@ -156,84 +161,141 @@ class PostBottomBar extends StatelessWidget {
   final PostController controller;
   final bool isForVideo;
 
-  const PostBottomBar({Key? key, required this.controller, this.isForVideo = false}) : super(key: key);
+  const PostBottomBar({super.key, required this.controller, this.isForVideo = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 12, bottom: 6),
+      margin: const EdgeInsets.only(top: 10, bottom: 4),
       child: Row(
         children: [
-          GetBuilder(
-              init: controller,
-              tag: "${controller.post.id}",
-              id: 'comment',
-              builder: (context) {
-                return GestureDetector(
-                  onTap: () {
-                    Get.bottomSheet(
-                      CommentScreen(postController: controller),
-                      isScrollControlled: true,
-                      ignoreSafeArea: false,
-                    ).then((value) {
-                      controller.update(['comment']);
-                      controller.update();
-                      controller.refreshView();
-                    });
-                  },
+          // Like Button Pill
+          Obx(
+            () {
+              final bool isLiked = controller.isLiked.value;
+              final Color pillBg = isForVideo
+                  ? (isLiked ? cRed.withValues(alpha: 0.3) : Colors.white12)
+                  : (isLiked ? const Color(0xFFFDF2F8) : const Color(0xFFF8FAFC));
+              final Color textColor = isForVideo
+                  ? cWhite
+                  : (isLiked ? cRed : cDarkText);
+
+              return GestureDetector(
+                onTap: () {
+                  controller.toggleFav();
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: pillBg,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isLiked ? cRed.withValues(alpha: 0.25) : const Color(0xFFE2E8F0),
+                      width: 1,
+                    ),
+                  ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
-                        MyImages.comment,
-                        width: 20,
-                        height: 20,
-                        color: isForVideo ? cWhite : cDarkText,
+                        isLiked ? MyImages.heartFill : MyImages.heart,
+                        width: 19,
+                        height: 19,
+                        color: isLiked ? cRed : (isForVideo ? cWhite : cLightText),
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
+                      const SizedBox(width: 6),
                       Text(
-                        (controller.post.commentsCount).makeToString(),
-                        style: MyTextStyle.gilroyRegular(size: 14, color: isForVideo ? cWhite : cDarkText),
+                        (controller.post.likesCount ?? 0).makeToString(),
+                        style: isLiked
+                            ? MyTextStyle.gilroyBold(size: 13, color: textColor)
+                            : MyTextStyle.gilroyMedium(size: 13, color: textColor),
                       ),
                     ],
                   ),
-                );
-              }),
-          const SizedBox(
-            width: 15,
+                ),
+              );
+            },
           ),
-          Obx(
-            () => LikeButton(
-              onTap: (isLiked) async {
-                this.controller.toggleFav();
-                return true;
-              },
-              countPostion: CountPostion.right,
-              likeCount: this.controller.post.likesCount ?? 0,
-              size: 21,
-              isLiked: controller.isLiked.value,
-              likeCountPadding: const EdgeInsets.symmetric(horizontal: 4),
-              countBuilder: (likeCount, isLiked, text) {
-                return Text(
-                  text,
-                  style: MyTextStyle.gilroyRegular(size: 14, color: isForVideo ? cWhite : cDarkText),
-                );
-              },
-              likeBuilder: (isLiked) {
-                return Image.asset(
-                  this.controller.isLiked.value ? MyImages.heartFill : MyImages.heart,
-                  width: 21,
-                  height: 21,
-                  color: this.controller.isLiked.value
-                      ? cRed
-                      : isForVideo
-                          ? cWhite
-                          : cDarkText,
-                );
-              },
+          const SizedBox(width: 10),
+
+          // Comment Button Pill
+          GetBuilder(
+            init: controller,
+            tag: "${controller.post.id}",
+            id: 'comment',
+            builder: (context) {
+              return GestureDetector(
+                onTap: () {
+                  Get.bottomSheet(
+                    CommentScreen(postController: controller),
+                    isScrollControlled: true,
+                    ignoreSafeArea: false,
+                  ).then((value) {
+                    controller.update(['comment']);
+                    controller.update();
+                    controller.refreshView();
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isForVideo ? Colors.white12 : const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isForVideo ? Colors.transparent : const Color(0xFFE2E8F0),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        MyImages.comment,
+                        width: 18,
+                        height: 18,
+                        color: isForVideo ? cWhite : cLightText,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        (controller.post.commentsCount).makeToString(),
+                        style: MyTextStyle.gilroyMedium(size: 13, color: isForVideo ? cWhite : cDarkText),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(width: 10),
+
+          // Share Button Pill
+          GestureDetector(
+            onTap: controller.sharePost,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: isForVideo ? Colors.white12 : const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isForVideo ? Colors.transparent : const Color(0xFFE2E8F0),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    MyImages.share,
+                    width: 17,
+                    height: 17,
+                    color: isForVideo ? cWhite : cLightText,
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -244,7 +306,7 @@ class PostTopBar extends StatelessWidget {
   final PostController controller;
   final bool isForVideo;
 
-  const PostTopBar({Key? key, required this.controller, this.isForVideo = false}) : super(key: key);
+  const PostTopBar({super.key, required this.controller, this.isForVideo = false});
 
   @override
   Widget build(BuildContext context) {
@@ -254,49 +316,57 @@ class PostTopBar extends StatelessWidget {
       },
       child: Row(
         children: [
-          MyCachedProfileImage(
-            imageUrl: controller.post.user?.profile,
-            width: 45,
-            height: 45,
-            fullName: controller.post.user?.fullName,
-            cornerRadius: 15,
+          Container(
+            padding: const EdgeInsets.all(1.5),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: cGradientPrimary,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(1.0),
+              decoration: const BoxDecoration(
+                color: cWhite,
+                shape: BoxShape.circle,
+              ),
+              child: MyCachedProfileImage(
+                imageUrl: controller.post.user?.profile,
+                width: 42,
+                height: 42,
+                fullName: controller.post.user?.fullName,
+                cornerRadius: 42,
+              ),
+            ),
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              controller.post.user?.fullName ?? "",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: MyTextStyle.gilroyBold(color: isForVideo ? cWhite : cBlack, size: 17),
-                            ),
-                          ),
-                          VerifyIcon(user: controller.post.user),
-                          const SizedBox(
-                            width: 5,
-                          )
-                        ],
+                    Flexible(
+                      child: Text(
+                        controller.post.user?.fullName ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: MyTextStyle.gilroyBold(color: isForVideo ? cWhite : cBlack, size: 15),
                       ),
                     ),
-
-                    // const Spacer(),
-                    Text(
-                      controller.post.date.timeAgo(),
-                      style: MyTextStyle.gilroyLight(size: 14, color: (isForVideo ? cLightIcon : cLightText)),
+                    const SizedBox(width: 4),
+                    VerifyIcon(user: controller.post.user),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: isForVideo ? Colors.white12 : const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        controller.post.date.timeAgo(),
+                        style: MyTextStyle.gilroyMedium(size: 11, color: isForVideo ? cWhite : cLightText),
+                      ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    const SizedBox(width: 6),
                     PostMenuButton(
                       controller: controller,
                       isForVideo: isForVideo,
@@ -307,7 +377,7 @@ class PostTopBar extends StatelessWidget {
                 ),
                 Text(
                   "@${controller.post.user?.username ?? ""}",
-                  style: MyTextStyle.gilroyLight(size: 16, color: isForVideo ? cWhite : cLightText),
+                  style: MyTextStyle.gilroyRegular(size: 13, color: isForVideo ? Colors.white70 : cLightText),
                 ),
               ],
             ),

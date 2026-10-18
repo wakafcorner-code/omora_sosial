@@ -25,8 +25,16 @@ class _BannerAdViewState extends State<BannerAdView> {
   @override
   Widget build(BuildContext context) {
     if (_bannerAd != null) {
-      return Align(
-        alignment: Alignment.bottomCenter,
+      return Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(color: Color(0xFFE2E8F0), width: 0.8),
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        alignment: Alignment.center,
         child: SafeArea(
           bottom: widget.bottom,
           top: widget.top,
@@ -38,14 +46,17 @@ class _BannerAdViewState extends State<BannerAdView> {
         ),
       );
     } else {
-      return Container(height: 0);
+      return const SizedBox.shrink();
     }
   }
 
   void loadAd() {
     if (SessionManager.shared.isAdMobOn()) {
+      final String adUnitId = SessionManager.shared.getBannerAdId();
+      if (adUnitId.isEmpty) return;
+
       _bannerAd = BannerAd(
-        adUnitId: SessionManager.shared.getBannerAdId(),
+        adUnitId: adUnitId,
         request: const AdRequest(),
         size: AdSize.banner,
         listener: BannerAdListener(

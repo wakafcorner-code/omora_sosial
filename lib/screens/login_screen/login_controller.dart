@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -32,23 +29,6 @@ class LoginController extends BaseController {
     super.onReady();
   }
 
-  Future<String?> getWebClientId() async {
-    try {
-      final jsonStr = await rootBundle.loadString('android/app/google-services.json');
-      final data = json.decode(jsonStr);
-
-      final oauthClients = data['client'][0]['oauth_client'] as List;
-      for (var client in oauthClients) {
-        if (client['client_type'] == 3 && client['client_id'] != null) {
-          return client['client_id'].toString();
-        }
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  }
-
   void emailLogin() {
     Get.bottomSheet(SignInWithEmailScreen(
       onSubmit: (fullName, identity) {
@@ -59,25 +39,30 @@ class LoginController extends BaseController {
 
   void googleLogin() async {
     try {
-      String? id = await getWebClientId();
-
-      if (Platform.isAndroid && id != null && id.isNotEmpty) {
-        await GoogleSignIn.instance.initialize(serverClientId: id);
-      } else {
-        await GoogleSignIn.instance.initialize();
-      }
-
-      GoogleSignInAccount googleSignInAccount = await GoogleSignIn.instance.authenticate(scopeHint: ['email']);
-      registerUser(
-        fullName: googleSignInAccount.displayName,
-        identity: googleSignInAccount.email,
-        loginType: LoginType.google,
+      const String webClientId = '686870784106-0m7ba4r22c38lkt06i91o09qkr30b5pg.apps.googleusercontent.com';
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        serverClientId: webClientId,
+        scopes: ['email'],
       );
+
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      if (googleSignInAccount != null) {
+        registerUser(
+          fullName: googleSignInAccount.displayName,
+          identity: googleSignInAccount.email,
+          loginType: LoginType.google,
+        );
+      }
     } catch (exception) {
       stopLoading();
       Loggers.error("Google Sign In error: ${exception.toString()}");
-      Get.snackbar("Google Sign In Error", "Gagal login Google: ${exception.toString()}",
-          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Google Sign In Error",
+        "Gagal login Google: ${exception.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 

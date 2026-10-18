@@ -130,6 +130,9 @@ class FeedsView extends StatelessWidget {
             child: ListView.builder(
               primary: false,
               shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              addRepaintBoundaries: true,
+              cacheExtent: 800,
               padding: const EdgeInsets.only(top: 5),
               itemCount: controller.posts.length,
               itemBuilder: (context, index) {

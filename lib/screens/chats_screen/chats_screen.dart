@@ -68,81 +68,134 @@ class ChatsScreen extends StatelessWidget {
   }
 
   Widget segmentController(ChatsScreensController controller) {
-    return CupertinoSlidingSegmentedControl(
-      children: {
-        0: buildSegment(LKeys.chats.tr, 0, controller),
-        1: buildSegment(LKeys.rooms.tr, 1, controller),
-        2: buildSegment(LKeys.requests.tr, 2, controller),
-      },
-      groupValue: controller.selectedPage,
-      backgroundColor: cLightText.withValues(alpha: 0.2),
-      thumbColor: cBlack,
-      padding: const EdgeInsets.all(0),
-      onValueChanged: (value) {
-        controller.onChangeSegment(value ?? 0);
-      },
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          _segmentItem(LKeys.chats.tr, 0, controller, cPrimary),
+          const SizedBox(width: 4),
+          _segmentItem(LKeys.rooms.tr, 1, controller, cSecondary),
+          const SizedBox(width: 4),
+          _segmentItem(LKeys.requests.tr, 2, controller, cAccentPink),
+        ],
+      ),
     );
   }
 
-  Widget buildSegment(String text, int index, ChatsScreensController controller) {
-    return Container(
-      alignment: Alignment.center,
-      width: (Get.width / 3) - 30,
-      child: Text(
-        text.toUpperCase(),
-        style: MyTextStyle.gilroySemiBold(size: 13, color: controller.selectedPage == index ? cWhite : cBlack).copyWith(letterSpacing: 2),
+  Widget _segmentItem(String text, int index, ChatsScreensController controller, Color activeColor) {
+    final bool isSelected = controller.selectedPage == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => controller.onChangeSegment(index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 9),
+          decoration: BoxDecoration(
+            color: isSelected ? cWhite : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            text,
+            style: isSelected
+                ? MyTextStyle.gilroyBold(size: 13, color: activeColor)
+                : MyTextStyle.gilroyMedium(size: 13, color: const Color(0xFF64748B)),
+          ),
+        ),
       ),
     );
   }
 
   Widget top(ChatsScreensController controller) {
-    double imageSize = controller.isSearching ? 17 : 25;
     return Container(
-      color: cBG,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: const BoxDecoration(
+        color: cWhite,
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: SafeArea(
-          bottom: false,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              controller.isSearching
-                  ? Expanded(
+        bottom: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            controller.isSearching
+                ? Expanded(
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+                      ),
+                      alignment: Alignment.center,
                       child: TextField(
                         onChanged: controller.onChange,
                         textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(hintText: LKeys.searchHere.tr, hintStyle: MyTextStyle.gilroyRegular(color: cLightText.withValues(alpha: 0.6)), border: InputBorder.none, counterText: '', isDense: true, contentPadding: const EdgeInsets.all(0)),
+                        decoration: InputDecoration(
+                          hintText: LKeys.searchHere.tr,
+                          hintStyle: MyTextStyle.gilroyRegular(color: const Color(0xFF94A3B8)),
+                          border: InputBorder.none,
+                          counterText: '',
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
                         cursorColor: cPrimary,
-                        style: MyTextStyle.gilroyRegular(color: cLightText),
+                        style: MyTextStyle.gilroyRegular(color: cMainText),
                         controller: controller.textEditingController,
-                        textInputAction: TextInputAction.newline,
                         autofocus: true,
                       ),
-                    )
-                  : Expanded(
-                      child: Row(
-                        children: [
-                          SizedBox(width: imageSize),
-                          const Spacer(),
-                          const LogoTag(),
-                          const Spacer(),
-                        ],
-                      ),
                     ),
-              GestureDetector(
+                  )
+                : const Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: LogoTag(width: 95),
+                    ),
+                  ),
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: () {
+                controller.textEditingController.text = "";
+                controller.isSearching = !controller.isSearching;
+                controller.update();
+                controller.onChange('');
+              },
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: controller.isSearching ? const Color(0xFFF1F5F9) : const Color(0xFFECFDF5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
                 child: Image.asset(
                   controller.isSearching ? MyImages.close : MyImages.search,
-                  width: imageSize,
-                  height: imageSize,
+                  width: 19,
+                  height: 19,
+                  color: controller.isSearching ? cLightText : cPrimary,
                 ),
-                onTap: () {
-                  controller.textEditingController.text = "";
-                  controller.isSearching = !controller.isSearching;
-                  controller.update();
-                  controller.onChange('');
-                },
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -9,71 +9,95 @@ import 'package:untitled/screens/search_screen/search_screen.dart';
 import 'package:untitled/utilities/const.dart';
 
 class FeedScreenTopBar extends StatelessWidget {
-  const FeedScreenTopBar({Key? key}) : super(key: key);
+  const FeedScreenTopBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double imageSize = 25;
     return Container(
-      color: cBG,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: const BoxDecoration(
+        color: cWhite,
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: SafeArea(
         bottom: false,
-        child: Stack(
-          alignment: Alignment.center,
+        child: Row(
           children: [
-            const LogoTag(),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Get.to(() => const NotificationScreen());
-                  },
-                  child: Image.asset(
-                    MyImages.bell,
-                    width: imageSize,
-                    height: imageSize,
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.to(() => RandomScreen());
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Image.asset(
-                      MyImages.random,
-                      width: 20,
-                    ),
-                  ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Get.to(() => const AudioSpacesScreen());
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Image.asset(
-                      MyImages.audioRoom,
-                      width: imageSize,
-                      height: imageSize,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Get.to(() => const SearchScreen());
-                  },
-                  child: Image.asset(
-                    MyImages.search,
-                    width: imageSize,
-                    height: imageSize,
-                  ),
-                ),
-              ],
+            const LogoTag(width: 105),
+            const Spacer(),
+            _iconButton(
+              image: MyImages.random,
+              bgColor: const Color(0xFFFDF2F8),
+              iconColor: cLogoPink,
+              imageSize: 16,
+              onTap: () {
+                Get.to(() => RandomScreen());
+              },
+            ),
+            const SizedBox(width: 6),
+            _iconButton(
+              image: MyImages.audioRoom,
+              bgColor: const Color(0xFFF5F3FF),
+              iconColor: cLogoPurple,
+              imageSize: 17,
+              onTap: () {
+                Get.to(() => const AudioSpacesScreen());
+              },
+            ),
+            const SizedBox(width: 6),
+            _iconButton(
+              image: MyImages.search,
+              bgColor: const Color(0xFFECFEFF),
+              iconColor: const Color(0xFF0284C7),
+              imageSize: 17,
+              onTap: () {
+                Get.to(() => const SearchScreen());
+              },
+            ),
+            const SizedBox(width: 6),
+            _iconButton(
+              image: MyImages.bell,
+              bgColor: const Color(0xFFEEF2FF),
+              iconColor: const Color(0xFF6366F1),
+              imageSize: 17,
+              onTap: () {
+                Get.to(() => const NotificationScreen());
+              },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _iconButton({
+    required String image,
+    required Color bgColor,
+    required Color iconColor,
+    required VoidCallback onTap,
+    double imageSize = 20,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          alignment: Alignment.center,
+          child: Image.asset(
+            image,
+            width: imageSize,
+            height: imageSize,
+            color: iconColor,
+          ),
         ),
       ),
     );

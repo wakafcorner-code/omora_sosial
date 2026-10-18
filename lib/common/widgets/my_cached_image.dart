@@ -38,8 +38,10 @@ class MyCachedImage extends StatelessWidget {
         width: width,
         height: height,
         fit: BoxFit.cover,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
+        memCacheWidth: (width != null && width! > 0) ? (width! * 2.5).toInt().clamp(100, 1440) : null,
+        memCacheHeight: (height != null && height! > 0) ? (height! * 2.5).toInt().clamp(100, 2560) : null,
+        fadeInDuration: const Duration(milliseconds: 150),
+        fadeOutDuration: const Duration(milliseconds: 150),
         errorWidget: (context, url, error) {
           return placeHolder();
         },
@@ -95,8 +97,10 @@ class MyCachedProfileImage extends StatelessWidget {
         cornerSmoothing: cornerSmoothing,
       ),
       child: CachedNetworkImage(
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
+        memCacheWidth: (width != null && width! > 0) ? (width! * 2.5).toInt().clamp(80, 400) : 200,
+        memCacheHeight: (height != null && height! > 0) ? (height! * 2.5).toInt().clamp(80, 400) : 200,
+        fadeInDuration: const Duration(milliseconds: 150),
+        fadeOutDuration: const Duration(milliseconds: 150),
         imageUrl: imageUrl?.addBaseURL() ?? '',
         width: width,
         height: height,
@@ -110,20 +114,24 @@ class MyCachedProfileImage extends StatelessWidget {
   }
 
   Widget placeHolder() {
+    final String initial = fullName == null || fullName!.trim().isEmpty ? "O" : fullName!.trim()[0].toUpperCase();
+    final double fontSize = min(((width ?? 45) * 0.45), 28.0);
     return ClipSmoothRect(
       radius: SmoothBorderRadius(
         cornerRadius: min(((width ?? 0) / 2), cornerRadius),
         cornerSmoothing: cornerSmoothing,
       ),
       child: Container(
-        color: cDarkBG,
+        decoration: BoxDecoration(
+          gradient: getAvatarGradient(fullName ?? initial),
+        ),
         height: height,
         width: width,
         alignment: Alignment.center,
-        padding: const EdgeInsets.only(top: 2),
+        padding: const EdgeInsets.only(top: 1),
         child: Text(
-          fullName == null || fullName!.isEmpty ? "No"[0].toUpperCase() : fullName![0].toUpperCase(),
-          style: MyTextStyle.gilroyBold(color: cPrimary, size: 30),
+          initial,
+          style: MyTextStyle.gilroyBold(color: cWhite, size: fontSize),
         ),
       ),
     );

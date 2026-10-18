@@ -17,7 +17,6 @@ import 'package:untitled/screens/profile_screen/profile_screen.dart';
 import 'package:untitled/screens/reels_screen/comments/reel_comment_screen.dart';
 import 'package:untitled/screens/reels_screen/music/music_reels_screen.dart';
 import 'package:untitled/screens/report_screen/report_sheet.dart';
-import 'package:untitled/utilities/const.dart';
 
 class ReelController extends BaseController {
   Rx<Reel?> reel = Rx<Reel?>(null);
@@ -103,7 +102,6 @@ class ReelController extends BaseController {
 
   void onShareTap() {
     FocusManager.instance.primaryFocus?.unfocus();
-    String title = '${reel.value?.user?.fullName ?? ''} on ${appName} : ${reel.value?.description ?? ''}';
     ShareManager.shared.shareTheContent(key: ShareKeys.reel, value: reel.value?.id ?? 0);
   }
 
